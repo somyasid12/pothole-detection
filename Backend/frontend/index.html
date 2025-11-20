@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pothole Detection — Dashboard</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom CSS (folder is named "asset") -->
+  <link rel="stylesheet" href="/frontend/asset/style.css" />
+
+  <!-- Smooth Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+
+  <meta name="description" content="Pothole detection dashboard powered by AI" />
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition">
+
+  <div class="min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar hidden md:block w-72 p-6">
+
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
+          Pothole AI
+        </h1>
+        <p class="small text-gray-500 dark:text-gray-300 mt-1">Detection • Reports • Alerts</p>
+      </div>
+
+      <nav class="space-y-2">
+        <button class="side-link side-active" data-section="upload">📤 Upload</button>
+        <button class="side-link" data-section="results">📊 Results</button>
+        <button class="side-link" data-section="complaint">📝 Complaint</button>
+        <button class="side-link" data-section="email">✉️ Email</button>
+        <button class="side-link" data-section="settings">⚙️ Settings</button>
+      </nav>
+
+      <div class="mt-8">
+        <button id="themeToggle" class="w-full py-2 px-3 rounded-md border small hover:bg-indigo-100 dark:hover:bg-gray-700">
+          🌙 Toggle Theme
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col">
+
+      <!-- HEADER -->
+      <header class="glass sticky top-0 z-20 border-b dark:border-gray-700 bg-white/80 dark:bg-gray-800/50 backdrop-blur-lg shadow-sm px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button id="sidebarToggle" class="md:hidden p-2 rounded-md border dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">☰</button>
+          <h2 class="text-xl font-semibold tracking-tight">Pothole Detection Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-3 small text-gray-600 dark:text-gray-300">Running Offline • Secure</div>
+      </header>
+
+      <!-- MAIN BODY -->
+      <main class="p-6 space-y-8 overflow-auto">
+
+        <!-- UPLOAD PANEL -->
+        <section id="upload" class="card fade-in">
+
+          <!-- HERO BANNER -->
+          <div class="dashboard-hero mb-6 rounded-2xl overflow-hidden shadow-xl relative">
+            <img src="https://i.ibb.co/c2DMkzJ/smart-road-ai.jpg" class="w-full h-48 md:h-64 object-cover opacity-90 hover:opacity-100 transition duration-300" alt="Smart road hero image">
+            <div class="absolute inset-0 bg-black/40 flex flex-col justify-center p-6">
+              <h2 class="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">Smart Road Monitoring 🚧</h2>
+              <p class="text-gray-200 mt-2 text-lg">Detect potholes instantly using AI-powered vision.</p>
+            </div>
+          </div>
+
+          <!-- DECOR ICONS -->
+          <div class="flex gap-4 mb-6">
+            <img src="https://i.ibb.co/4N7ZHKX/road-icon.png" class="h-14 opacity-80 hover:opacity-100 transition" alt="road icon">
+            <img src="https://i.ibb.co/vw4wP2T/detect-icon.png" class="h-14 opacity-80 hover:opacity-100 transition" alt="detect icon">
+            <img src="https://i.ibb.co/TPFPWyk/report-icon.png" class="h-14 opacity-80 hover:opacity-100 transition" alt="report icon">
+          </div>
+
+          <h3 class="panel-title">Upload Road Images</h3>
+          <p class="text-gray-500 dark:text-gray-400 small">Drag & drop or browse images captured from phone or dashcam.</p>
+
+          <div class="flex gap-8 mt-6">
+
+            <!-- LEFT SIDE -->
+            <div class="flex-1">
+              <div id="dropZone" class="dropzone mt-4 p-10">
+                <!-- file input is used by JS; keep it hidden -->
+                <input id="fileInput" type="file" multiple accept="image/*" class="hidden" />
+                <div class="flex flex-col items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       class="h-14 w-14 text-blue-400 animate-pulse"
+                       viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16l3-3 4 4 8-8 3 3" />
+                  </svg>
+                  <div class="font-semibold">Drop images here or click to choose</div>
+                  <div class="small text-gray-500">Supports multiple files</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 mt-6">
+                <button id="detectBtn" class="btn-primary w-full">🔍 Detect Potholes</button>
+                <button id="clearBtn" class="btn-secondary w-full">🧹 Clear</button>
+              </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="w-80">
+              <div class="card text-center">
+                <h4 class="text-sm text-gray-500 uppercase">Summary</h4>
+                <div class="mt-3">
+                  <div class="text-4xl font-bold text-blue-600 dark:text-blue-400" id="totalCount">0</div>
+                  <div class="small text-gray-500 dark:text-gray-400 mt-1">Total detected potholes</div>
+                </div>
+                <button id="openCarouselBtn" class="btn-primary w-full mt-5">🖼 View Images</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- RESULTS -->
+        <section id="results" class="card hidden fade-in">
+          <h3 class="panel-title">Detection Results</h3>
+          <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4"></div>
+        </section>
+
+        <!-- COMPLAINT -->
+        <section id="complaint" class="card hidden fade-in">
+          <h3 class="panel-title">Generate Complaint</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input id="roadName" class="input" placeholder="Road name" />
+            <input id="area" class="input" placeholder="Area / locality" />
+            <input id="city" class="input" placeholder="City" />
+          </div>
+
+          <input id="potholeCount" type="number" class="input mt-3" placeholder="Detected potholes" value="0" />
+          <textarea id="extraDetails" class="input mt-3 h-28" placeholder="Extra details (optional)"></textarea>
+
+          <div class="flex gap-4 mt-4">
+            <button id="genComplaintBtn" class="btn-primary">📝 Generate</button>
+            <button id="downloadPdfBtn" class="btn-secondary">📄 Download PDF</button>
+          </div>
+
+          <pre id="complaintText" class="mt-4 bg-gray-900 text-green-300 p-4 rounded text-sm overflow-auto"></pre>
+        </section>
+
+        <!-- EMAIL PANEL -->
+        <section id="email" class="card hidden fade-in">
+          <h3 class="panel-title">Send Email</h3>
+
+          <p class="small text-blue-600 dark:text-blue-400 mb-2">Attached images will be shown below.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input id="emailTo" class="input" placeholder="Recipient email" />
+            <input id="emailSubject" class="input" placeholder="Subject" />
+          </div>
+
+          <textarea id="emailBody" class="input mt-3 h-32" placeholder="Email body"></textarea>
+
+          <!-- EMAIL IMAGE PREVIEW (JS can insert base64 thumbnails here) -->
+          <div id="emailImagePreview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5 email-section-expanded"></div>
+
+          <div class="flex gap-4 mt-4">
+            <button id="sendEmailBtn" class="btn-primary">📬 Send Email</button>
+            <div id="emailStatus" class="small text-gray-500"></div>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="settings" class="card hidden fade-in">
+          <h3 class="panel-title">Settings</h3>
+          <p class="small text-gray-500">Configure paths & keys in backend app.py</p>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- CAROUSEL MODAL -->
+  <div id="carouselModal" class="modal hidden">
+    <div class="modal-box fade-in">
+      <div class="flex justify-between items-center">
+        <h3 class="font-semibold">Image Viewer</h3>
+        <button id="closeCarousel" class="btn-secondary">✖ Close</button>
+      </div>
+
+      <div class="mt-4 flex gap-3 items-center justify-center">
+        <button id="prevImg" class="btn-secondary">⬅ Prev</button>
+        <img id="carouselImg" class="carousel-img shadow-lg" alt="carousel image" />
+        <button id="nextImg" class="btn-secondary">Next ➡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADER -->
+  <div id="loader" class="loader hidden">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <div id="loaderText" class="small mt-2 text-center">Processing...</div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <!-- PATH MATCHES your folder name "asset" -->
+  <script src="/frontend/asset/js/script.js"></script>
+
+</body>
+</html>
+
